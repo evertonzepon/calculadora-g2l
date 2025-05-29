@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to bottom, #000000, #006400); /* Fade preto para verde escuro */
+    color: white; /* Letras em branco */
+}
+
+#app {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.1); /* Fundo transparente */
+    color: white; /* Letras em branco */
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid #006400; /* Borda estilo neon verde escuro */
+    box-shadow: 0 0 10px #006400, 0 0 40px #006400, 0 0 80px #006400; /* Efeito neon verde escuro */
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 3px solid (0, 128, 0); /* Borda verde mais visível */
+    border-radius: 4px;
+    background-color: rgba(0, 128, 0, 0.8); /* Verde para ações positivas */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #008000, 0 0 40px #008000, 0 0 80px #008000; /* Efeito neon verde */
+}
+
+button:hover {
+    background-color: rgba(0, 128, 0, 1); /* Fundo verde sólido */
+}
+
+button.cancel {
+    background-color: rgba(64, 64, 64, 0.8); /* Cinza escuro para ações neutras */
+    border: 3px solid #464646; /* Borda cinza escuro mais visível */
+    box-shadow: 0 0 5px #404040, 0 0 20px #404040, 0 0 40px #404040; /* Sombra reduzida */
+}
+
+button.cancel:hover {
+    background-color: rgba(64, 64, 64, 1); /* Fundo cinza escuro sólido */
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: white;
+}
+
+input[type="date"],
+input[type="number"] {
+    width: 95%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 2px solid #000000; /* Borda verde escuro */
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.1); /* Fundo transparente */
+    color: white;
+    font-size: 16px;
+    box-shadow: 0 0 5px #000000, 0 0 10px #006400; /* Efeito leve de sombra */
+}
+
+input[type="date"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: #00FF00; /* Verde claro ao focar */
+    box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00; /* Efeito neon ao focar */
+}
