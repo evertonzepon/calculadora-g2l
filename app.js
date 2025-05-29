@@ -15,8 +15,8 @@ function renderStartScreen() {
         <p>Em caso de dúvidas, procure informação no Loop ou peça ajuda ao coleguinha do lado. Caso mesmo assim não se sinta seguro em continuar, peça ajuda à gestão.</p>  
         <h2>Informe as datas do contrato:</h2>
         <div style="display: flex; flex-direction: column; gap: 10px;">
-            <label>Data de início: <input type="date" id="startDate"></label>
-            <label>Data de fim: <input type="date" id="endDate"></label>
+            <label>Data de início do contrato: <input type="date" id="startDate"></label>
+            <label>Data de fim do contrato: <input type="date" id="endDate"></label>
         </div>
         <button onclick="handleDateInput()">Confirmar</button>
     `
@@ -37,8 +37,17 @@ function handleDateInput() {
     const endDateInput = document.getElementById('endDate').value;
 
     if (validateDates(startDateInput, endDateInput)) {
-        calculateDays(startDateInput, endDateInput);
-        renderDaysDialog();
+        const startDate = new Date(startDateInput);
+        const endDate = new Date(endDateInput);
+        const diferencaMs = endDate - startDate;
+        const totalDays = diferencaMs / (1000 * 60 * 60 * 24); // Converte para dias
+
+        if (totalDays <= 7) {
+            renderError('A quantidade mínima de dias permitida deve ser maior que 7.');
+        } else {
+            calculateDays(startDateInput, endDateInput);
+            renderDaysDialog();
+        }
     } else {
         renderError('Por favor, insira datas válidas.');
     }
@@ -147,8 +156,8 @@ function calculateBonusWithPeaks(peakCount) {
 
 function renderFinalScreen() {
     app.innerHTML = `
-        <h2>Bonificação à ser paga:</h2>
-        <p>R$${bonus}</p>
+        <h1>Bonificação à ser paga:</h1>
+        <h1>-- R$${bonus} --</h1>
         <button onclick="renderStartScreen()">Reiniciar</button>
     `;
 }
