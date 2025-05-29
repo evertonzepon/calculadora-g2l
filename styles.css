@@ -37,6 +37,7 @@ button {
 
 button:hover {
     background-color: rgba(0, 128, 0, 1); /* Fundo verde sólido */
+    box-shadow: 0 0 15px #00FF00, 0 0 30px #00FF00, 0 0 45px #00FF00; /* Efeito neon verde ao hover */
 }
 
 button.cancel {
@@ -47,6 +48,7 @@ button.cancel {
 
 button.cancel:hover {
     background-color: rgba(64, 64, 64, 1); /* Fundo cinza escuro sólido */
+    box-shadow: 0 0 15px #808080, 0 0 30px #808080, 0 0 45px #808080; /* Efeito neon cinza ao hover */
 }
 
 label {
@@ -62,7 +64,7 @@ input[type="number"] {
     padding: 10px;
     margin-top: 5px;
     margin-bottom: 15px;
-    border: 2px solid #000000; /* Borda verde escuro */
+    border: 2px solid #364e34; /* Borda verde escuro */
     border-radius: 4px;
     background-color: rgba(255, 255, 255, 0.1); /* Fundo transparente */
     color: white;
@@ -75,4 +77,16 @@ input[type="number"]:focus {
     outline: none;
     border-color: #00FF00; /* Verde claro ao focar */
     box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00; /* Efeito neon ao focar */
+}
+
+h1 {
+    text-align: center; /* Centraliza o texto */
+    margin-bottom: 20px; /* Adiciona espaço abaixo do título */
+    color: white; /* Mantém o texto em branco */
+}
+
+h2 {
+    text-align: center; /* Centraliza o texto */
+    margin-bottom: 20px; /* Adiciona espaço abaixo do título */
+    color: white; /* Mantém o texto em branco */
 }
