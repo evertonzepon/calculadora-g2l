@@ -175,7 +175,8 @@ function calculateDays(startDateInput, endDateInput) {
     contractEndDate = endDateInput;    // Salvar como string para exibição
 
     const diferencaMs = endDate - startDate;
-    totalDays = Math.ceil(diferencaMs / (1000 * 60 * 60 * 24)); // Converte para dias e arredonda para cima
+    const totalHours = diferencaMs / (1000 * 60 * 60); // Converte para horas
+    totalDays = Math.max(0, Math.ceil(totalHours / 24) - 1); // Converte para dias, arredonda para cima e subtrai o primeiro dia
 }
 
 function calculateBonus() {
