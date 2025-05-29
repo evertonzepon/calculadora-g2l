@@ -1,135 +1,162 @@
-document.getElementById('startDate').addEventListener('change', validateDates);
-document.getElementById('endDate').addEventListener('change', validateDates);
+// Variáveis globais
+const app = document.getElementById('app');
+let contractStartDate = null;
+let contractEndDate = null;
+let totalDays = 0;
+let hasSpeedPeaks = null;
+let speedPeaks = [];
+let bonus = 0;
 
-let hasPeaks = false; // Variável para rastrear se há picos
+// Funções principais
+function renderStartScreen() {
+    app.innerHTML = `
+        <h1>Calculadora de Bonificação G2L</h1>
+        <h2>- Ação Zero Picos -</h2>
+        <p>Em caso de dúvidas, procure informação no Loop ou peça ajuda ao coleguinha do lado. Caso mesmo assim não se sinta seguro em continuar, peça ajuda à gestão.</p>  
+        <h2>Informe as datas do contrato:</h2>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <label>Data de início: <input type="date" id="startDate"></label>
+            <label>Data de fim: <input type="date" id="endDate"></label>
+        </div>
+        <button onclick="handleDateInput()">Confirmar</button>
+    `
+}
 
-function validateDates() {
-    const startDate = new Date(document.getElementById('startDate').value);
-    const endDate = new Date(document.getElementById('endDate').value);
+function renderError(message) {
+    app.innerHTML = `
+        <div id="error" style="text-align: center; padding: 20px; background: rgba(255, 0, 0, 0.2); border: 2px solid #FF0000; border-radius: 8px; color: white; box-shadow: 0 0 10px #FF0000, 0 0 40px #FF0000;">
+            <h2>Erro</h2>
+            <p>${message}</p>
+            <button class="cancel" onclick="renderStartScreen()">Voltar</button>
+        </div>
+    `;
+}
 
-    if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && startDate < endDate) {
-        // Exibir o diálogo para perguntar sobre os picos
-        document.getElementById('dialog').style.display = 'flex';
+function handleDateInput() {
+    const startDateInput = document.getElementById('startDate').value;
+    const endDateInput = document.getElementById('endDate').value;
 
-        // Atualizar o total de dias
-        updateTotalDays(startDate, endDate);
+    if (validateDates(startDateInput, endDateInput)) {
+        calculateDays(startDateInput, endDateInput);
+        renderDaysDialog();
     } else {
-        // Ocultar os campos relacionados aos picos e o diálogo
-        document.getElementById('dialog').style.display = 'none';
-        document.getElementById('peakSection').style.display = 'none';
-        document.getElementById('peakCount').style.display = 'none';
-        document.getElementById('peakDatesLabel').style.display = 'none';
-        document.getElementById('peakDatesContainer').style.display = 'none';
-
-        // Resetar o total de dias
-        document.getElementById('totalDays').textContent = "Total de dias: 0";
+        renderError('Por favor, insira datas válidas.');
     }
 }
 
-document.getElementById('yesButton').addEventListener('click', function () {
-    hasPeaks = true;
-    document.getElementById('dialog').style.display = 'none';
-    document.getElementById('peakSection').style.display = 'block';
-    document.getElementById('peakCount').style.display = 'block';
-    document.getElementById('peakDatesLabel').style.display = 'block';
-    document.getElementById('peakDatesContainer').style.display = 'block';
-});
+function validateDates(startDateInput, endDateInput) {
+    const startDate = new Date(startDateInput);
+    const endDate = new Date(endDateInput);
+    return startDateInput && endDateInput && startDate < endDate;
+}
 
-document.getElementById('noButton').addEventListener('click', function () {
-    hasPeaks = false;
-    document.getElementById('dialog').style.display = 'none';
-    document.getElementById('peakSection').style.display = 'none';
-    document.getElementById('peakCount').style.display = 'none';
-    document.getElementById('peakDatesLabel').style.display = 'none';
-    document.getElementById('peakDatesContainer').style.display = 'none';
-});
+function calculateDays(startDateInput, endDateInput) {
+    const startDate = new Date(startDateInput);
+    const endDate = new Date(endDateInput);
 
-document.getElementById('addPeakDate').addEventListener('click', function () {
-    const peakDateInput = document.createElement('input');
-    peakDateInput.type = 'date';
-    peakDateInput.className = 'input small-input';
-    peakDateInput.placeholder = 'Selecione a data do pico';
+    contractStartDate = startDateInput; // Salvar como string para exibição
+    contractEndDate = endDateInput;    // Salvar como string para exibição
 
-    const removeButton = document.createElement('button');
-    removeButton.textContent = 'Remover';
-    removeButton.className = 'small-button';
+    const diferencaMs = endDate - startDate;
+    totalDays = diferencaMs / (1000 * 60 * 60 * 24); // Converte para dias
+}
 
-    const listItem = document.createElement('li');
-    listItem.appendChild(peakDateInput);
-    listItem.appendChild(removeButton);
+function renderDaysDialog() {
+    app.innerHTML = `
+        <h2>Verifique os dados informados antes de prosseguir</h2>
+        <p>Data de início do contrato: ${formatDate(contractStartDate)}</p>
+        <p>Data de fim do contrato: ${formatDate(contractEndDate)}</p>
+        <p>Total de dias: ${totalDays}</p>
+        <button class="confirm" onclick="renderSpeedPeaksScreen()">Confirmar</button>
+        <button class="cancel" onclick="renderStartScreen()">Cancelar</button>
+    `;
+}
 
-    document.getElementById('peakDatesList').appendChild(listItem);
+function renderSpeedPeaksScreen() {
+    app.innerHTML = `
+        <h2>Houveram picos de velocidade?</h2>
+        <button onclick="handleSpeedPeaks(true)">Sim</button>
+        <button onclick="handleSpeedPeaks(false)">Não</button>
+    `;
+}
 
-    removeButton.addEventListener('click', function () {
-        listItem.remove();
+function handleSpeedPeaks(answer) {
+    hasSpeedPeaks = answer;
+    if (hasSpeedPeaks) {
+        renderSpeedPeaksInputScreen();
+    } else {
+        calculateBonus();
+        renderFinalScreen();
+    }
+}
+
+function renderSpeedPeaksInputScreen() {
+    app.innerHTML = `
+        <h2>Informe a quantidade de picos de velocidade:</h2>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="number" id="peakCount" min="1" placeholder="Digite a quantidade de picos">
+        </div>
+        <button onclick="renderPeakDatesScreen()">Confirmar</button>
+    `;
+}
+
+function renderPeakDatesScreen() {
+    const peakCount = parseInt(document.getElementById('peakCount').value);
+    if (peakCount > 0) {
+        speedPeaks = Array(peakCount).fill(null);
+        let inputs = '';
+        for (let i = 0; i < peakCount; i++) {
+            inputs += `<label>Data do pico ${i + 1}: <input type="date" id="peakDate${i}"></label>`;
+        }
+        app.innerHTML = `
+            <h2>Informe as datas dos picos de velocidade:</h2>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                ${inputs}
+            </div>
+            <button onclick="calculateBonusWithPeaks(${peakCount})">Confirmar</button>
+        `;
+    } else {
+        renderError('Por favor, insira um número válido.');
+    }
+}
+
+function calculateBonus() {
+    bonus = Math.ceil((totalDays / 7) * 100);
+    if (bonus < 100) bonus = 100;
+}
+
+function calculateBonusWithPeaks(peakCount) {
+    calculateBonus();
+    const peakDates = [];
+    for (let i = 0; i < peakCount; i++) {
+        const date = new Date(document.getElementById(`peakDate${i}`).value);
+        if (date) peakDates.push(date.toLocaleDateString('pt-BR'));
+    }
+
+    const weeksWithPeaks = new Set();
+    peakDates.forEach(date => {
+        const weekNumber = Math.floor((new Date(date) - new Date(contractStartDate)) / (1000 * 60 * 60 * 24 * 7));
+        weeksWithPeaks.add(weekNumber);
     });
-});
 
-function updateTotalDays(startDate, endDate) {
-    const timeDiff = endDate - startDate;
-    const totalDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // Inclui o dia inicial
-    document.getElementById('totalDays').textContent = `Total de dias: ${totalDays}`;
+    bonus -= weeksWithPeaks.size * 100;
+    if (bonus < 100) bonus = 100;
+
+    renderFinalScreen();
 }
 
-document.getElementById('calculate').addEventListener('click', function () {
-    const startDate = new Date(document.getElementById('startDate').value);
-    const endDate = new Date(document.getElementById('endDate').value);
+function renderFinalScreen() {
+    app.innerHTML = `
+        <h2>Bonificação à ser paga:</h2>
+        <p>R$${bonus}</p>
+        <button onclick="renderStartScreen()">Reiniciar</button>
+    `;
+}
 
-    // Validação das datas de início e fim
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate >= endDate) {
-        document.getElementById('result').textContent = "Por favor, insira datas válidas.";
-        return;
-    }
+// Funções auxiliares
+function formatDate(dateString) {
+    return dateString.split('-').reverse().join('/');
+}
 
-    // Calcular a quantidade total de dias
-    const timeDiff = endDate - startDate;
-    const totalDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // Inclui o dia inicial
-
-    // Calcular o total de semanas proporcionalmente
-    const totalWeeks = totalDays / 7; // Divisão exata para calcular semanas
-    let totalBonus = Math.ceil(totalWeeks * 100); // Multiplicar por 100 e arredondar sempre para cima
-
-    if (hasPeaks) {
-        const peakCount = parseInt(document.getElementById('peakCount').value);
-        const peakDateInputs = document.querySelectorAll('#peakDatesList input[type="date"]');
-        const peakDates = Array.from(peakDateInputs).map(input => new Date(input.value));
-
-        // Validação da quantidade de picos
-        if (isNaN(peakCount) || peakCount < 0) {
-            document.getElementById('result').textContent = "Por favor, insira uma quantidade válida de picos.";
-            return;
-        }
-
-        // Validação da correspondência entre quantidade de picos e datas informadas
-        if (peakCount !== peakDates.length) {
-            document.getElementById('result').textContent = "A quantidade de picos não corresponde à quantidade de datas informadas.";
-            return;
-        }
-
-        // Validação das datas dos picos
-        if (peakDates.some(date => isNaN(date.getTime()) || date < startDate || date > endDate)) {
-            document.getElementById('result').textContent = "Por favor, insira datas válidas para os picos de velocidade no intervalo selecionado.";
-            return;
-        }
-
-        // Ordenar as datas dos picos para garantir consistência
-        peakDates.sort((a, b) => a - b);
-
-        // Aplicar desconto com base nas semanas afetadas pelos picos
-        let discount = 0;
-        const weeksWithPeaks = new Set(peakDates.map(date => {
-            const dayDiff = Math.ceil((date - startDate) / (1000 * 60 * 60 * 24)) + 1;
-            return Math.ceil(dayDiff / 7); // Identificar a semana do pico
-        }));
-        discount = weeksWithPeaks.size * 100; // Cada semana com picos anula R$100
-
-        totalBonus -= discount;
-    }
-
-    // Garantir que o valor seja R$0 se o desconto exceder o total
-    if (totalBonus < 0) {
-        totalBonus = 0;
-    }
-
-    document.getElementById('result').textContent = `Bonificação total: R$${totalBonus}`;
-});
+// Inicializa a aplicação
+renderStartScreen();
