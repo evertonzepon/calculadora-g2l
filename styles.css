@@ -58,20 +58,25 @@ label {
     color: white;
 }
 
+input[type="datetime-local"],
 input[type="date"],
 input[type="number"] {
-    width: 95%;
+    display: block; /* Garante que o input seja tratado como bloco */
+    box-sizing: border-box; /* Garante que padding e borda sejam incluídos no tamanho total */
+    width: 90%; 
+    margin: 0 auto; /* Centraliza horizontalmente */
     padding: 10px;
     margin-top: 5px;
     margin-bottom: 15px;
-    border: 2px solid #364e34; /* Borda verde escuro */
+    border: 2px solid #006400; /* Borda verde escuro */
     border-radius: 4px;
     background-color: rgba(255, 255, 255, 0.1); /* Fundo transparente */
     color: white;
     font-size: 16px;
-    box-shadow: 0 0 5px #000000, 0 0 10px #006400; /* Efeito leve de sombra */
+    box-shadow: 0 0 5px #006400, 0 0 10px #006400; /* Efeito leve de sombra */
 }
 
+input[type="datetime-local"]:focus,
 input[type="date"]:focus,
 input[type="number"]:focus {
     outline: none;
