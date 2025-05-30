@@ -176,7 +176,7 @@ function calculateDays(startDateInput, endDateInput) {
 
     const diferencaMs = endDate - startDate;
     const totalHours = diferencaMs / (1000 * 60 * 60); // Converte para horas
-    totalDays = Math.max(0, Math.ceil(totalHours / 24) - 1); // Converte para dias, arredonda para cima e subtrai o primeiro dia
+    totalDays = Math.ceil(totalHours / 24); // Converte para dias, arredonda para cima
 }
 
 function calculateBonus() {
