@@ -1,97 +1,237 @@
-body {
-    font-family: Arial, sans-serif;
+:root {
+    --cor-fundo-inicio: #000000;
+    --cor-fundo-fim: #004d00; /* Verde mais escuro para o gradiente */
+    --cor-principal: #006400; /* Verde escuro */
+    --cor-neon-principal: #008000; /* Verde neon */
+    --cor-neon-hover: #00FF00; /* Verde neon mais claro para hover */
+    --cor-texto: white;
+    --cor-erro-fundo: rgba(255, 0, 0, 0.2);
+    --cor-erro-borda: #FF0000;
+    --cor-erro-sombra: #FF0000;
+    --cor-confirmacao-fundo: rgba(0, 0, 255, 0.1);
+    --cor-confirmacao-borda: rgb(13, 80, 60);
+    --cor-confirmacao-sombra: rgb(21, 124, 38);
+    --cor-cancel-fundo: rgba(64, 64, 64, 0.8);
+    --cor-cancel-borda: #464646;
+    --cor-cancel-sombra: #404040;
+    --cor-cancel-hover-fundo: rgba(64, 64, 64, 1);
+    --cor-cancel-hover-sombra: #808080;
+    --cor-input-fundo: rgba(255, 255, 255, 0.1);
+    --cor-input-borda: var(--cor-principal);
+    --cor-input-sombra: var(--cor-principal);
+    --cor-input-foco-borda: var(--cor-neon-hover);
+    --cor-input-foco-sombra: var(--cor-neon-hover);
+
+    --fonte-padrao: Arial, sans-serif;
+    --tamanho-fonte-base: 16px; /* Base para rem */
+    --espacamento-padrao: 1rem; /* 16px */
+    --espacamento-metade: 0.5rem; /* 8px */
+    --espacamento-dobro: 2rem; /* 32px */
+    --raio-borda: 8px;
+    --raio-borda-input: 4px;
+}
+
+/* Reset básico e estilos globais */
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+html {
+    font-size: var(--tamanho-fonte-base);
+}
+
+body {
+    font-family: var(--fonte-padrao);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background: linear-gradient(to bottom, #000000, #006400); /* Fade preto para verde escuro */
-    color: white; /* Letras em branco */
+    min-height: 100vh; /* Garante altura mínima */
+    background: linear-gradient(to bottom, var(--cor-fundo-inicio), var(--cor-fundo-fim));
+    color: var(--cor-texto);
+    padding: var(--espacamento-padrao); /* Adiciona padding para telas pequenas */
 }
 
+/* Container principal da aplicação */
 #app {
     width: 100%;
-    max-width: 400px;
-    background: rgba(255, 255, 255, 0.1); /* Fundo transparente */
-    color: white; /* Letras em branco */
-    padding: 20px;
-    border-radius: 8px;
-    border: 2px solid #006400; /* Borda estilo neon verde escuro */
-    box-shadow: 0 0 10px #006400, 0 0 40px #006400, 0 0 80px #006400; /* Efeito neon verde escuro */
+    max-width: 450px; /* Aumentado ligeiramente */
+    background: var(--cor-input-fundo); /* Reutilizando cor de input */
+    color: var(--cor-texto);
+    padding: var(--espacamento-dobro);
+    border-radius: var(--raio-borda);
+    border: 2px solid var(--cor-principal);
+    box-shadow: 0 0 10px var(--cor-principal), 0 0 40px var(--cor-principal);
+    /* Removido o terceiro valor de sombra para simplificar */
 }
 
-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: 3px solid (0, 128, 0); /* Borda verde mais visível */
-    border-radius: 4px;
-    background-color: rgba(0, 128, 0, 0.8); /* Verde para ações positivas */
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 0 10px #008000, 0 0 40px #008000, 0 0 80px #008000; /* Efeito neon verde */
+/* Classes utilitárias */
+.container {
+    width: 100%; /* Ocupa a largura do #app */
+    margin: 0 auto;
 }
 
-button:hover {
-    background-color: rgba(0, 128, 0, 1); /* Fundo verde sólido */
-    box-shadow: 0 0 15px #00FF00, 0 0 30px #00FF00, 0 0 45px #00FF00; /* Efeito neon verde ao hover */
+.text-center {
+    text-align: center;
 }
 
-button.cancel {
-    background-color: rgba(64, 64, 64, 0.8); /* Cinza escuro para ações neutras */
-    border: 3px solid #464646; /* Borda cinza escuro mais visível */
-    box-shadow: 0 0 5px #404040, 0 0 20px #404040, 0 0 40px #404040; /* Sombra reduzida */
+/* Estilos de texto */
+h1, h2, h3 {
+    text-align: center;
+    margin-bottom: var(--espacamento-padrao);
+    color: var(--cor-texto);
 }
 
-button.cancel:hover {
-    background-color: rgba(64, 64, 64, 1); /* Fundo cinza escuro sólido */
-    box-shadow: 0 0 15px #808080, 0 0 30px #808080, 0 0 45px #808080; /* Efeito neon cinza ao hover */
+h1 {
+    font-size: 1.8rem;
+}
+
+h2 {
+    font-size: 1.4rem;
+}
+
+h3 {
+    font-size: 1.1rem;
+    line-height: 1.5; /* Melhora leitura */
+}
+
+p {
+    margin-bottom: var(--espacamento-padrao);
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+strong {
+    font-weight: bold;
+}
+
+/* Formulários e Inputs */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacamento-padrao);
+    align-items: stretch; /* Alinha itens para ocupar largura */
+    margin-bottom: var(--espacamento-padrao);
 }
 
 label {
     display: block;
-    margin-bottom: 10px;
-    font-size: 16px;
-    color: white;
+    margin-bottom: var(--espacamento-metade);
+    font-size: 1rem;
+    color: var(--cor-texto);
+    text-align: left; /* Alinha labels à esquerda */
 }
 
 input[type="datetime-local"],
 input[type="date"],
 input[type="number"] {
-    display: block; /* Garante que o input seja tratado como bloco */
-    box-sizing: border-box; /* Garante que padding e borda sejam incluídos no tamanho total */
-    width: 90%; 
-    margin: 0 auto; /* Centraliza horizontalmente */
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 2px solid #006400; /* Borda verde escuro */
-    border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.1); /* Fundo transparente */
-    color: white;
-    font-size: 16px;
-    box-shadow: 0 0 5px #006400, 0 0 10px #006400; /* Efeito leve de sombra */
+    display: block;
+    width: 100%; /* Ocupa toda a largura disponível */
+    padding: var(--espacamento-metade);
+    margin-top: var(--espacamento-metade) / 2;
+    border: 2px solid var(--cor-input-borda);
+    border-radius: var(--raio-borda-input);
+    background-color: var(--cor-input-fundo);
+    color: var(--cor-texto);
+    font-size: 1rem;
+    box-shadow: 0 0 5px var(--cor-input-sombra);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 input[type="datetime-local"]:focus,
 input[type="date"]:focus,
 input[type="number"]:focus {
     outline: none;
-    border-color: #00FF00; /* Verde claro ao focar */
-    box-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00; /* Efeito neon ao focar */
+    border-color: var(--cor-input-foco-borda);
+    box-shadow: 0 0 10px var(--cor-input-foco-sombra);
 }
 
-h1 {
-    text-align: center; /* Centraliza o texto */
-    margin-bottom: 20px; /* Adiciona espaço abaixo do título */
-    color: white; /* Mantém o texto em branco */
+/* Botões */
+button {
+    display: block;
+    width: 100%;
+    padding: var(--espacamento-padrao);
+    margin-top: var(--espacamento-padrao);
+    border-radius: var(--raio-borda-input);
+    color: var(--cor-texto);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    border-style: solid;
+    border-width: 3px;
 }
 
-h2 {
-    text-align: center; /* Centraliza o texto */
-    margin-bottom: 20px; /* Adiciona espaço abaixo do título */
-    color: white; /* Mantém o texto em branco */
+.button-confirm {
+    background-color: rgba(0, 128, 0, 0.8); /* Verde */
+    border-color: rgb(0, 128, 0); /* Corrigido */
+    box-shadow: 0 0 10px var(--cor-neon-principal);
 }
+
+.button-confirm:hover {
+    background-color: rgba(0, 128, 0, 1);
+    border-color: var(--cor-neon-hover);
+    box-shadow: 0 0 15px var(--cor-neon-hover), 0 0 30px var(--cor-neon-hover);
+}
+
+.button-cancel {
+    background-color: var(--cor-cancel-fundo);
+    border-color: var(--cor-cancel-borda);
+    box-shadow: 0 0 5px var(--cor-cancel-sombra);
+}
+
+.button-cancel:hover {
+    background-color: var(--cor-cancel-hover-fundo);
+    border-color: var(--cor-cancel-hover-sombra);
+    box-shadow: 0 0 15px var(--cor-cancel-hover-sombra);
+}
+
+/* Caixas Específicas */
+.error-box {
+    padding: var(--espacamento-padrao);
+    background: var(--cor-erro-fundo);
+    border: 2px solid var(--cor-erro-borda);
+    border-radius: var(--raio-borda);
+    color: var(--cor-texto);
+    box-shadow: 0 0 10px var(--cor-erro-sombra);
+}
+
+.error-box h2 {
+    color: var(--cor-erro-borda); /* Destaca o título do erro */
+}
+
+.confirmation-box {
+    text-align: left;
+    padding: var(--espacamento-padrao);
+    background: var(--cor-confirmacao-fundo);
+    border: 2px solid var(--cor-confirmacao-borda);
+    border-radius: var(--raio-borda);
+    color: var(--cor-texto);
+    box-shadow: 0 0 10px var(--cor-confirmacao-sombra);
+    margin-bottom: var(--espacamento-padrao);
+}
+
+.confirmation-box p {
+    margin-bottom: var(--espacamento-metade);
+}
+
+/* Media Queries para Responsividade (Exemplo) */
+@media (max-width: 600px) {
+    html {
+        font-size: 14px; /* Reduz a fonte base em telas menores */
+    }
+
+    #app {
+        padding: var(--espacamento-padrao);
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+}
+
