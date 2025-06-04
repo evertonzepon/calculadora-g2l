@@ -83,7 +83,8 @@ function renderDaysDialog() {
     container.appendChild(createElement("h3", { textContent: `Data e hora de início: ${formatDateTime(appState.contractStartDate)}` }));
     container.appendChild(createElement("h3", { textContent: `Data e hora de fim: ${formatDateTime(appState.contractEndDate)}` }));
     const totalDaysP = createElement("p");
-    totalDaysP.innerHTML = `Total de dias: <strong>${appState.totalDays}</strong>`; // Usando innerHTML para o strong
+    // Arredonda para cima o total de dias para exibição
+    totalDaysP.innerHTML = `Total de dias: <strong>${Math.ceil(appState.totalDays)}</strong>`;
     container.appendChild(totalDaysP);
 
     const confirmButton = createElement("button", { textContent: "Confirmar", className: "button-confirm" });
