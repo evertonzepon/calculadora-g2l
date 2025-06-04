@@ -191,8 +191,8 @@ function renderFinalScreen() {
     container.appendChild(resultH1);
 
     const bonusH1 = createElement("h1");
-    // Exibe o valor final já calculado e arredondado
-    bonusH1.innerHTML = `<strong>-- R$${appState.bonus} --</strong>`; 
+    // Exibe o valor final já calculado e arredondado para cima
+    bonusH1.innerHTML = `<strong>-- R$${Math.ceil(appState.bonus)} --</strong>`;
     container.appendChild(bonusH1);
 
     const restartButton = createElement("button", { textContent: "Reiniciar", className: "button-confirm" });
@@ -222,7 +222,7 @@ function handleDateInput() {
             renderDaysDialog();
         }
     } else {
-        renderError("Erro: Datas inválidas. Verifique se a data de início é anterior à data de fim e se ambas foram preenchidas.");
+        renderError("Erro: Você errou e foi moleque. Datas inválidas. Verifique se a data de início é anterior à data de fim e se ambas foram preenchidas.");
     }
 }
 
@@ -306,30 +306,24 @@ function calculateContractDays(startDateInput, endDateInput) {
     const endDate = new Date(endDateInput);
 
     // Cálculo de dias: Considera-se um dia completo por cada período de 24h, arredondado para cima.
-    // Ex: 7 dias e 1 hora = 8 dias para cálculo.
     const differenceMs = endDate - startDate;
-    // Para o cálculo do bônus, usamos a diferença exata em dias, sem arredondar aqui.
     const totalHours = differenceMs / (1000 * 60 * 60); // Total de horas
-    appState.totalDays = totalHours / 24; // Total de dias (pode ter decimal)
-    // O arredondamento para exibição na tela de confirmação pode ser feito lá, se necessário,
-    // mas para o cálculo do bônus, usamos o valor preciso.
-    // Para manter a exibição anterior, podemos arredondar para cima apenas para exibição:
-    // appState.totalDaysDisplay = Math.ceil(appState.totalDays);
+    appState.totalDays = Math.ceil(totalHours / 24); // Arredonda para cima o total de dias
 }
 
 
 // Calcula o bônus final SEM picos (NOVA LÓGICA)
 function calculateBonusWithoutPeaks() {
-    // Bônus = (total dias / 7) * 100
+    // Bônus = Math.floor(total dias / 7) * 100
     let bonusRaw = (appState.totalDays / 7) * 100;
 
-    // Garante que o bônus não seja menor que o mínimo (100) ANTES de arredondar
+    // Garante que o bônus não seja menor que o mínimo (100)
     if (bonusRaw < 100) {
         bonusRaw = 100;
     }
 
-    // Arredonda o valor final para cima
-    appState.bonus = Math.ceil(bonusRaw);
+    // Armazena o valor final
+    appState.bonus = bonusRaw;
 }
 
 // Calcula o bônus final COM picos (NOVA LÓGICA)
