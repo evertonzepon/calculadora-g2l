@@ -4,9 +4,9 @@ const appState = {
     contractEndDate: null,
     totalDays: 0,
     hasSpeedPeaks: null,
-    speedPeaksData: [], // Armazenará as datas dos picos
+    speedPeaksData: [],
     bonus: 0,
-    peakCountInput: 0 // Para guardar temporariamente a contagem de picos
+    peakCountInput: 0
 };
 
 // Elemento principal da aplicação
@@ -15,7 +15,7 @@ const appElement = document.getElementById("app");
 // --- Funções de Renderização ---
 
 function clearApp() {
-    appElement.innerHTML = ""; // Limpa o conteúdo anterior
+    appElement.innerHTML = "";
 }
 
 function createElement(tag, options = {}) {
@@ -28,178 +28,195 @@ function createElement(tag, options = {}) {
     if (options.min) element.min = options.min;
     if (options.placeholder) element.placeholder = options.placeholder;
     if (options.htmlFor) element.htmlFor = options.htmlFor;
+    if (options.innerHTML) element.innerHTML = options.innerHTML;
     return element;
 }
 
-function renderStartScreen() {
+function createDialog(title, content, onClose) {
     clearApp();
+
+    const dialog = createElement("div");
+    const titleBar = createElement("div", { className: "title-bar" });
+    const titleBarText = createElement("div", { className: "title-bar-text", textContent: title });
+    const titleBarControls = createElement("div", { className: "title-bar-controls" });
+    const closeButton = createElement("button", { textContent: "X" });
+
+    // Adiciona funcionalidade ao botão de fechar
+    if (onClose) {
+        closeButton.addEventListener("click", onClose);
+    } else {
+        closeButton.addEventListener("click", renderStartScreen); // Volta para o início por padrão
+    }
+
+    titleBarControls.appendChild(closeButton);
+    titleBar.appendChild(titleBarText);
+    titleBar.appendChild(titleBarControls);
+
+    const windowContent = createElement("div", { className: "window-content" });
+    windowContent.appendChild(content);
+
+    dialog.appendChild(titleBar);
+    dialog.appendChild(windowContent);
+    appElement.appendChild(dialog);
+}
+
+function renderStartScreen() {
     const container = createElement("div", { className: "container text-center" });
 
     container.appendChild(createElement("h1", { textContent: "Calculadora de Bonificação G2L" }));
-    container.appendChild(createElement("h2", { textContent: "- Ação Zero Picos -" }));
+    container.appendChild(createElement("p", { textContent: "Ação Zero Picos" }));
     container.appendChild(createElement("p", { textContent: "Em caso de dúvidas, procure informação no Loop ou peça ajuda ao coleguinha do lado. Caso mesmo assim não se sinta seguro em continuar, peça ajuda à gestão." }));
-    container.appendChild(createElement("h2", { textContent: "Informe as datas e horários do contrato:" }));
+    container.appendChild(createElement("p", { textContent: "Informe as datas e horários do contrato:" }));
 
     const formContainer = createElement("div", { className: "form-group" });
 
-    const startLabel = createElement("label", { htmlFor: "startDateTime", textContent: "Data e hora de início do contrato:" });
+    const startLabel = createElement("label", { htmlFor: "startDateTime", textContent: "Data e hora de início:" });
     const startInput = createElement("input", { type: "datetime-local", id: "startDateTime", step: "60" });
     formContainer.appendChild(startLabel);
     formContainer.appendChild(startInput);
 
-    const endLabel = createElement("label", { htmlFor: "endDateTime", textContent: "Data e hora de fim do contrato:" });
+    const endLabel = createElement("label", { htmlFor: "endDateTime", textContent: "Data e hora de fim:" });
     const endInput = createElement("input", { type: "datetime-local", id: "endDateTime", step: "60" });
     formContainer.appendChild(endLabel);
     formContainer.appendChild(endInput);
 
     container.appendChild(formContainer);
 
-    const confirmButton = createElement("button", { textContent: "Confirmar", className: "button-confirm" });
+    const confirmButton = createElement("button", { textContent: "Confirmar" });
     confirmButton.addEventListener("click", handleDateInput);
     container.appendChild(confirmButton);
 
-    appElement.appendChild(container);
+    createDialog("Calculadora de Bonificação", container, renderStartScreen); // Ao fechar, volta para esta tela
 }
 
 function renderError(message) {
-    clearApp();
     const errorContainer = createElement("div", { id: "error", className: "error-box text-center" });
 
-    errorContainer.appendChild(createElement("h2", { textContent: "Erro na Validação" }));
+    errorContainer.appendChild(createElement("h2", { textContent: "Erro de Sistema" }));
     errorContainer.appendChild(createElement("p", { textContent: message }));
 
-    const backButton = createElement("button", { textContent: "Voltar", className: "button-cancel" });
+    const backButton = createElement("button", { textContent: "Voltar" });
     backButton.addEventListener("click", renderStartScreen);
     errorContainer.appendChild(backButton);
 
-    appElement.appendChild(errorContainer);
+    createDialog("ERRO", errorContainer, renderStartScreen);
 }
 
 function renderDaysDialog() {
-    clearApp();
     const container = createElement("div", { className: "container text-center" });
 
-    container.appendChild(createElement("h2", { textContent: "Verifique os dados informados antes de prosseguir" }));
-    container.appendChild(createElement("h3", { textContent: `Data e hora de início: ${formatDateTime(appState.contractStartDate)}` }));
-    container.appendChild(createElement("h3", { textContent: `Data e hora de fim: ${formatDateTime(appState.contractEndDate)}` }));
+    container.appendChild(createElement("h2", { textContent: "Verificar Dados" }));
+    container.appendChild(createElement("h3", { textContent: `INÍCIO: ${formatDateTime(appState.contractStartDate)}` }));
+    container.appendChild(createElement("h3", { textContent: `FIM: ${formatDateTime(appState.contractEndDate)}` }));
     const totalDaysP = createElement("p");
-    // Arredonda para cima o total de dias para exibição
-    totalDaysP.innerHTML = `Total de dias: <strong>${Math.ceil(appState.totalDays)}</strong>`;
+    totalDaysP.innerHTML = `TOTAL DE DIAS: <strong>${Math.ceil(appState.totalDays)}</strong>`;
     container.appendChild(totalDaysP);
 
-    const confirmButton = createElement("button", { textContent: "Confirmar", className: "button-confirm" });
+    const confirmButton = createElement("button", { textContent: "Confirmar" });
     confirmButton.addEventListener("click", renderSpeedPeaksScreen);
     container.appendChild(confirmButton);
 
-    const cancelButton = createElement("button", { textContent: "Cancelar", className: "button-cancel" });
+    const cancelButton = createElement("button", { textContent: "Cancelar" });
     cancelButton.addEventListener("click", renderStartScreen);
     container.appendChild(cancelButton);
 
-    appElement.appendChild(container);
+    createDialog("Verificação", container, renderStartScreen);
 }
 
 function renderSpeedPeaksScreen() {
-    clearApp();
     const container = createElement("div", { className: "container text-center" });
 
     container.appendChild(createElement("h2", { textContent: "Houveram picos de velocidade?" }));
 
-    const yesButton = createElement("button", { textContent: "Sim", className: "button-confirm" });
+    const yesButton = createElement("button", { textContent: "Sim" });
     yesButton.addEventListener("click", () => handleSpeedPeaks(true));
     container.appendChild(yesButton);
 
-    const noButton = createElement("button", { textContent: "Não", className: "button-confirm" }); // Usar confirm ou uma classe neutra?
+    const noButton = createElement("button", { textContent: "Não" });
     noButton.addEventListener("click", () => handleSpeedPeaks(false));
     container.appendChild(noButton);
 
-    appElement.appendChild(container);
+    createDialog("Picos de Velocidade", container, renderDaysDialog); // Voltar para a tela de verificação
 }
 
 function renderSpeedPeaksInputScreen() {
-    clearApp();
     const container = createElement("div", { className: "container text-center" });
 
-    container.appendChild(createElement("h2", { textContent: "Informe a quantidade de picos de velocidade:" }));
+    container.appendChild(createElement("h2", { textContent: "Informe a quantidade de picos:" }));
 
     const inputContainer = createElement("div", { className: "form-group" });
-    const peakInput = createElement("input", { type: "number", id: "peakCount", min: "1", placeholder: "Digite a quantidade de picos" });
+    const peakInput = createElement("input", { type: "number", id: "peakCount", min: "1", placeholder: "Digite a quantidade" });
     inputContainer.appendChild(peakInput);
     container.appendChild(inputContainer);
 
-    const confirmButton = createElement("button", { textContent: "Confirmar", className: "button-confirm" });
+    const confirmButton = createElement("button", { textContent: "Confirmar" });
     confirmButton.addEventListener("click", handlePeakCount);
     container.appendChild(confirmButton);
 
-    appElement.appendChild(container);
+    createDialog("Quantidade de Picos", container, renderSpeedPeaksScreen); // Voltar para a tela anterior
 }
 
 function renderPeakDatesScreen(peakCount) {
-    clearApp();
     const container = createElement("div", { className: "container text-center" });
 
-    container.appendChild(createElement("h2", { textContent: "Informe as datas dos picos de velocidade:" }));
+    container.appendChild(createElement("h2", { textContent: "Informe as datas dos picos:" }));
 
     const inputContainer = createElement("div", { className: "form-group" });
-    appState.speedPeaksData = Array(peakCount).fill(null); // Reinicia/inicializa array
+    appState.speedPeaksData = Array(peakCount).fill(null);
 
     for (let i = 0; i < peakCount; i++) {
-        const label = createElement("label", { htmlFor: `peakDate${i}`, textContent: `Data do pico ${i + 1}:` });
+        const label = createElement("label", { htmlFor: `peakDate${i}`, textContent: `PICO ${i + 1}:` });
         const input = createElement("input", { type: "date", id: `peakDate${i}` });
         inputContainer.appendChild(label);
         inputContainer.appendChild(input);
     }
     container.appendChild(inputContainer);
 
-    const confirmButton = createElement("button", { textContent: "Confirmar Datas", className: "button-confirm" });
+    const confirmButton = createElement("button", { textContent: "Confirmar Datas" });
     confirmButton.addEventListener("click", () => handlePeakDatesInput(peakCount));
     container.appendChild(confirmButton);
 
-    appElement.appendChild(container);
+    createDialog("Datas dos Picos", container, renderSpeedPeaksInputScreen); // Voltar para a tela de quantidade de picos
 }
 
 function renderPeakDatesConfirmationScreen(peakDates) {
-    clearApp();
     const container = createElement("div", { className: "container text-center" });
 
-    container.appendChild(createElement("h2", { textContent: "Confirme as datas dos picos informadas:" }));
+    container.appendChild(createElement("h2", { textContent: "Confirme as datas dos picos:" }));
 
     const confirmationBox = createElement("div", { className: "confirmation-box" });
     peakDates.forEach((date, index) => {
-        confirmationBox.appendChild(createElement("p", { textContent: `Data do Pico ${index + 1}: ${formatDate(date)}` }));
+        confirmationBox.appendChild(createElement("p", { textContent: `PICO ${index + 1}: ${formatDate(date)}` }));
     });
     container.appendChild(confirmationBox);
 
-    const confirmButton = createElement("button", { textContent: "Confirmar e Calcular", className: "button-confirm" });
-    // Passa as datas já validadas diretamente para a função de cálculo
+    const confirmButton = createElement("button", { textContent: "Confirmar e Calcular" });
     confirmButton.addEventListener("click", () => calculateBonusWithPeaks(peakDates));
     container.appendChild(confirmButton);
 
-    const backButton = createElement("button", { textContent: "Voltar", className: "button-cancel" });
-    // Guarda a contagem para poder voltar para a tela anterior
+    const backButton = createElement("button", { textContent: "Voltar" });
     backButton.addEventListener("click", () => renderPeakDatesScreen(appState.peakCountInput));
     container.appendChild(backButton);
 
-    appElement.appendChild(container);
+    createDialog("Confirmação", container, () => renderPeakDatesScreen(appState.peakCountInput)); // Botão "Voltar" na barra de título
 }
 
 function renderFinalScreen() {
-    clearApp();
     const container = createElement("div", { className: "container text-center" });
 
     const resultH1 = createElement("h1");
-    resultH1.innerHTML = "<strong>Bonificação a ser paga:</strong>";
+    resultH1.innerHTML = "<strong>BONIFICAÇÃO A SER PAGA:</strong>";
     container.appendChild(resultH1);
 
     const bonusH1 = createElement("h1");
-    // Exibe o valor final já calculado e arredondado para cima
-    bonusH1.innerHTML = `<strong>-- R$${Math.ceil(appState.bonus)} --</strong>`;
+    bonusH1.innerHTML = `<strong>R$${Math.ceil(appState.bonus)}</strong>`;
     container.appendChild(bonusH1);
 
-    const restartButton = createElement("button", { textContent: "Reiniciar", className: "button-confirm" });
+    const restartButton = createElement("button", { textContent: "Reiniciar" });
     restartButton.addEventListener("click", renderStartScreen);
     container.appendChild(restartButton);
 
-    appElement.appendChild(container);
+    createDialog("Resultado", container, renderStartScreen);
 }
 
 // --- Funções de Lógica e Manipulação de Dados ---
@@ -212,17 +229,16 @@ function handleDateInput() {
         const startDate = new Date(startDateInput);
         const endDate = new Date(endDateInput);
         const differenceMs = endDate - startDate;
-        const totalDaysRaw = differenceMs / (1000 * 60 * 60 * 24); // Dias brutos
+        const totalDaysRaw = differenceMs / (1000 * 60 * 60 * 24);
 
-        // Regra: Mínimo de 7 dias completos (ou mais de 7 dias brutos)
         if (totalDaysRaw <= 7) {
-            renderError("Erro: O período do contrato deve ser superior a 7 dias.");
+            renderError("O período do contrato deve ser superior a 7 dias.");
         } else {
             calculateContractDays(startDateInput, endDateInput);
             renderDaysDialog();
         }
     } else {
-        renderError("Erro: Você errou e foi moleque. Datas inválidas. Verifique se a data de início é anterior à data de fim e se ambas foram preenchidas.");
+        renderError("Datas inválidas. Verifique se a data de início é anterior à data de fim e se ambas foram preenchidas.");
     }
 }
 
@@ -231,7 +247,6 @@ function handleSpeedPeaks(answer) {
     if (appState.hasSpeedPeaks) {
         renderSpeedPeaksInputScreen();
     } else {
-        // Chama a função correta para cálculo sem picos
         calculateBonusWithoutPeaks();
         renderFinalScreen();
     }
@@ -242,10 +257,10 @@ function handlePeakCount() {
     const peakCount = parseInt(peakCountInput.value);
 
     if (!isNaN(peakCount) && peakCount > 0) {
-        appState.peakCountInput = peakCount; // Guarda a contagem
+        appState.peakCountInput = peakCount;
         renderPeakDatesScreen(peakCount);
     } else {
-        renderError("Erro: Por favor, insira um número válido (maior que zero) para a quantidade de picos.");
+        renderError("Por favor, insira um número válido (maior que zero) para a quantidade de picos.");
     }
 }
 
@@ -256,31 +271,29 @@ function handlePeakDatesInput(peakCount) {
         const dateInput = document.getElementById(`peakDate${i}`);
         const dateValue = dateInput.value;
         if (dateValue) {
-            // Validação adicional: A data do pico está dentro do período do contrato?
-            const peakDate = new Date(dateValue + "T00:00:00"); // Adiciona hora para evitar problemas de fuso
+            const peakDate = new Date(dateValue + "T00:00:00");
             const contractStart = new Date(appState.contractStartDate);
             const contractEnd = new Date(appState.contractEndDate);
 
-            // Ajusta as datas do contrato para início e fim do dia para comparação segura
             contractStart.setHours(0, 0, 0, 0);
             contractEnd.setHours(23, 59, 59, 999);
 
             if (peakDate >= contractStart && peakDate <= contractEnd) {
                 peakDates.push(dateValue);
             } else {
-                renderError(`Erro: A data do pico ${i + 1} (${formatDate(dateValue)}) está fora do período do contrato.`);
+                renderError(`A data do pico ${i + 1} (${formatDate(dateValue)}) está fora do período do contrato.`);
                 allDatesFilled = false;
-                break; // Interrompe a validação
+                break;
             }
         } else {
-            renderError(`Erro: Por favor, preencha a data do pico ${i + 1}.`);
+            renderError(`Por favor, preencha a data do pico ${i + 1}.`);
             allDatesFilled = false;
-            break; // Interrompe a validação
+            break;
         }
     }
 
     if (allDatesFilled) {
-        appState.speedPeaksData = peakDates; // Armazena as datas validadas no estado
+        appState.speedPeaksData = peakDates;
         renderPeakDatesConfirmationScreen(peakDates);
     }
 }
@@ -289,88 +302,63 @@ function handlePeakDatesInput(peakCount) {
 
 function validateDates(startDateInput, endDateInput) {
     if (!startDateInput || !endDateInput) {
-        return false; // Campos não preenchidos
+        return false;
     }
     const startDate = new Date(startDateInput);
     const endDate = new Date(endDateInput);
-    // Verifica se as datas são válidas e se início < fim
     return !isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && startDate < endDate;
 }
 
 function calculateContractDays(startDateInput, endDateInput) {
-    // Armazena as strings originais para exibição
     appState.contractStartDate = startDateInput;
     appState.contractEndDate = endDateInput;
 
     const startDate = new Date(startDateInput);
     const endDate = new Date(endDateInput);
 
-    // Cálculo de dias: Considera-se um dia completo por cada período de 24h, arredondado para cima.
     const differenceMs = endDate - startDate;
-    const totalHours = differenceMs / (1000 * 60 * 60); // Total de horas
-    appState.totalDays = Math.ceil(totalHours / 24); // Arredonda para cima o total de dias
+    const totalHours = differenceMs / (1000 * 60 * 60);
+    appState.totalDays = Math.ceil(totalHours / 24);
 }
 
-
-// Calcula o bônus final SEM picos (NOVA LÓGICA)
 function calculateBonusWithoutPeaks() {
-    // Bônus base = (total dias / 7) * 100
-    // Removemos a regra de bônus mínimo para permitir o cálculo proporcional
     let bonusRaw = (appState.totalDays / 7) * 100;
     appState.bonus = bonusRaw;
 }
 
-// Calcula o bônus final COM picos (NOVA LÓGICA)
 function calculateBonusWithPeaks(peakDates) {
-    // 1. Calcula o bônus base bruto (sem arredondar)
     const bonusRawBase = (appState.totalDays / 7) * 100;
 
-    // 2. Calcula as semanas únicas com picos
     const contractStart = new Date(appState.contractStartDate);
-    contractStart.setHours(0, 0, 0, 0); // Normaliza para início do dia
+    contractStart.setHours(0, 0, 0, 0);
     const weeksWithPeaks = new Set();
 
     peakDates.forEach(dateString => {
-        const peakDate = new Date(dateString + "T00:00:00"); // Adiciona hora para evitar problemas de fuso
-        peakDate.setHours(0, 0, 0, 0); // Normaliza para início do dia
+        const peakDate = new Date(dateString + "T00:00:00");
+        peakDate.setHours(0, 0, 0, 0);
 
-        // Calcula a diferença em dias desde o início do contrato
         const diffTime = peakDate - contractStart;
-        // Usamos Math.floor para garantir que a contagem de dias seja inteira para determinar a semana
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-        // Calcula o número da semana (base 0)
         const weekNumber = Math.floor(diffDays / 7);
         weeksWithPeaks.add(weekNumber);
     });
 
-    // 3. Calcula a dedução
     const deduction = weeksWithPeaks.size * 100;
 
-    // 4. Calcula o bônus final bruto (antes de arredondar e aplicar mínimo)
     let finalBonusRaw = bonusRawBase - deduction;
 
-    // Removemos a regra de bônus mínimo de 100 para permitir o cálculo proporcional
-    // if (finalBonusRaw < 100) {
-    //     finalBonusRaw = 100;
-    // }
-
-    // 5. Armazena o valor final
     appState.bonus = finalBonusRaw;
 
-    // 6. Renderiza a tela final
     renderFinalScreen();
 }
 
-
-// Formata data de YYYY-MM-DD para DD/MM/YYYY
 function formatDate(dateString) {
     if (!dateString) return "";
     const [year, month, day] = dateString.split("-");
     return `${day}/${month}/${year}`;
 }
 
-// Formata data e hora de string ISO para DD/MM/YYYY HH:MM
 function formatDateTime(dateTimeString) {
     if (!dateTimeString) return "";
     const date = new Date(dateTimeString);
@@ -381,5 +369,4 @@ function formatDateTime(dateTimeString) {
 
 // --- Inicialização ---
 
-// Garante que o DOM está pronto antes de renderizar
 document.addEventListener("DOMContentLoaded", renderStartScreen);
