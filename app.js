@@ -171,12 +171,12 @@ function renderPeakDatesConfirmationScreen(peakDates) {
 
     const confirmButton = createElement("button", { textContent: "Confirmar e Calcular", className: "button-confirm" });
     // Passa as datas já validadas diretamente para a função de cálculo
-    confirmButton.addEventListener("click", () => calculateBonusWithPeaks(peakDates)); 
+    confirmButton.addEventListener("click", () => calculateBonusWithPeaks(peakDates));
     container.appendChild(confirmButton);
 
     const backButton = createElement("button", { textContent: "Voltar", className: "button-cancel" });
     // Guarda a contagem para poder voltar para a tela anterior
-    backButton.addEventListener("click", () => renderPeakDatesScreen(appState.peakCountInput)); 
+    backButton.addEventListener("click", () => renderPeakDatesScreen(appState.peakCountInput));
     container.appendChild(backButton);
 
     appElement.appendChild(container);
@@ -232,7 +232,7 @@ function handleSpeedPeaks(answer) {
         renderSpeedPeaksInputScreen();
     } else {
         // Chama a função correta para cálculo sem picos
-        calculateBonusWithoutPeaks(); 
+        calculateBonusWithoutPeaks();
         renderFinalScreen();
     }
 }
@@ -260,7 +260,7 @@ function handlePeakDatesInput(peakCount) {
             const peakDate = new Date(dateValue + "T00:00:00"); // Adiciona hora para evitar problemas de fuso
             const contractStart = new Date(appState.contractStartDate);
             const contractEnd = new Date(appState.contractEndDate);
-            
+
             // Ajusta as datas do contrato para início e fim do dia para comparação segura
             contractStart.setHours(0, 0, 0, 0);
             contractEnd.setHours(23, 59, 59, 999);
@@ -314,22 +314,15 @@ function calculateContractDays(startDateInput, endDateInput) {
 
 // Calcula o bônus final SEM picos (NOVA LÓGICA)
 function calculateBonusWithoutPeaks() {
-    // Bônus = Math.floor(total dias / 7) * 100
+    // Bônus base = (total dias / 7) * 100
+    // Removemos a regra de bônus mínimo para permitir o cálculo proporcional
     let bonusRaw = (appState.totalDays / 7) * 100;
-
-    // Garante que o bônus não seja menor que o mínimo (100)
-    if (bonusRaw < 100) {
-        bonusRaw = 100;
-    }
-
-    // Armazena o valor final
     appState.bonus = bonusRaw;
 }
 
 // Calcula o bônus final COM picos (NOVA LÓGICA)
 function calculateBonusWithPeaks(peakDates) {
     // 1. Calcula o bônus base bruto (sem arredondar)
-    // Usa appState.totalDays que agora pode ter decimais
     const bonusRawBase = (appState.totalDays / 7) * 100;
 
     // 2. Calcula as semanas únicas com picos
@@ -344,7 +337,7 @@ function calculateBonusWithPeaks(peakDates) {
         // Calcula a diferença em dias desde o início do contrato
         const diffTime = peakDate - contractStart;
         // Usamos Math.floor para garantir que a contagem de dias seja inteira para determinar a semana
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
         // Calcula o número da semana (base 0)
         const weekNumber = Math.floor(diffDays / 7);
@@ -357,15 +350,15 @@ function calculateBonusWithPeaks(peakDates) {
     // 4. Calcula o bônus final bruto (antes de arredondar e aplicar mínimo)
     let finalBonusRaw = bonusRawBase - deduction;
 
-    // 5. Garante que o bônus não seja menor que o mínimo (100)
-    if (finalBonusRaw < 100) {
-        finalBonusRaw = 100;
-    }
+    // Removemos a regra de bônus mínimo de 100 para permitir o cálculo proporcional
+    // if (finalBonusRaw < 100) {
+    //     finalBonusRaw = 100;
+    // }
 
-    // 6. Arredonda o valor final para cima
-    appState.bonus = Math.ceil(finalBonusRaw);
+    // 5. Armazena o valor final
+    appState.bonus = finalBonusRaw;
 
-    // 7. Renderiza a tela final
+    // 6. Renderiza a tela final
     renderFinalScreen();
 }
 
@@ -390,4 +383,3 @@ function formatDateTime(dateTimeString) {
 
 // Garante que o DOM está pronto antes de renderizar
 document.addEventListener("DOMContentLoaded", renderStartScreen);
-
