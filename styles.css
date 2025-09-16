@@ -1,233 +1,232 @@
+/* Paleta de Cores e Fontes do Windows 98 */
 :root {
-    --cor-fundo-inicio: #000000;
-    --cor-fundo-fim: #004d00; /* Verde mais escuro para o gradiente */
-    --cor-principal: #006400; /* Verde escuro */
-    --cor-neon-principal: #008000; /* Verde neon */
-    --cor-neon-hover: #00FF00; /* Verde neon mais claro para hover */
-    --cor-texto: white;
-    --cor-erro-fundo: rgba(255, 0, 0, 0.2);
-    --cor-erro-borda: #FF0000;
-    --cor-erro-sombra: #FF0000;
-    --cor-confirmacao-fundo: rgba(0, 0, 255, 0.1);
-    --cor-confirmacao-borda: rgb(13, 80, 60);
-    --cor-confirmacao-sombra: rgb(21, 124, 38);
-    --cor-cancel-fundo: rgba(64, 64, 64, 0.8);
-    --cor-cancel-borda: #464646;
-    --cor-cancel-sombra: #404040;
-    --cor-cancel-hover-fundo: rgba(64, 64, 64, 1);
-    --cor-cancel-hover-sombra: #808080;
-    --cor-input-fundo: rgba(255, 255, 255, 0.1);
-    --cor-input-borda: var(--cor-principal);
-    --cor-input-sombra: var(--cor-principal);
-    --cor-input-foco-borda: var(--cor-neon-hover);
-    --cor-input-foco-sombra: var(--cor-neon-hover);
-
-    --fonte-padrao: Arial, sans-serif;
-    --tamanho-fonte-base: 16px; /* Base para rem */
-    --espacamento-padrao: 1rem; /* 16px */
-    --espacamento-metade: 0.5rem; /* 8px */
-    --espacamento-dobro: 2rem; /* 32px */
-    --raio-borda: 8px;
-    --raio-borda-input: 4px;
+    --win98-bg: #c0c0c0;
+    --win98-dark: #808080;
+    --win98-light: #fefefe;
+    --win98-border-darkest: #000000;
+    --win98-border-lightest: #ffffff;
+    --win98-titlebar: #000080; /* Azul escuro */
+    --win98-titlebar-text: #ffffff;
+    --win98-text: #000000;
+    --win98-font: "MS Sans Serif", "Arial", sans-serif;
+    --win98-font-size: 14px;
 }
 
-/* Reset básico e estilos globais */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    font-size: var(--tamanho-fonte-base);
-}
-
+/* Fundo da "Área de Trabalho" */
 body {
-    font-family: var(--fonte-padrao);
+    background-color: #008080; /* Azul esverdeado clássico do Windows 98 */
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="%23008080"/><g fill="%23000000" opacity=".2"><circle cx="1" cy="1" r="1"/><circle cx="6" cy="6" r="1"/></g></svg>');
+    font-family: var(--win98-font);
+    font-size: var(--win98-font-size);
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Garante altura mínima */
-    background: linear-gradient(to bottom, var(--cor-fundo-inicio), var(--cor-fundo-fim));
-    color: var(--cor-texto);
-    padding: var(--espacamento-padrao); /* Adiciona padding para telas pequenas */
+    min-height: 100vh;
+    margin: 0; /* Remove margem padrão do body */
+    overflow: hidden; /* Evita scrollbars desnecessários */
 }
 
-/* Container principal da aplicação */
+/* Container principal da "Janela" */
 #app {
-    width: 100%;
-    max-width: 450px; /* Aumentado ligeiramente */
-    background: var(--cor-input-fundo); /* Reutilizando cor de input */
-    color: var(--cor-texto);
-    padding: var(--espacamento-dobro);
-    border-radius: var(--raio-borda);
-    border: 2px solid var(--cor-principal);
-    box-shadow: 0 0 10px var(--cor-principal), 0 0 40px var(--cor-principal);
-    /* Removido o terceiro valor de sombra para simplificar */
+    width: 95%; /* Ocupa a maior parte da largura, com margem */
+    max-width: 450px; /* Largura máxima */
+    padding: 3px;
+    background-color: var(--win98-bg);
+    border-top: 2px solid var(--win98-light);
+    border-left: 2px solid var(--win98-light);
+    border-right: 2px solid var(--win98-dark);
+    border-bottom: 2px solid var(--win98-dark);
+    box-shadow: 1px 1px 0px 1px var(--win98-border-darkest);
+    box-sizing: border-box; /* Inclui padding e border no width/height */
 }
 
-/* Classes utilitárias */
-.container {
-    width: 100%; /* Ocupa a largura do #app */
-    margin: 0 auto;
-}
-
-.text-center {
-    text-align: center;
-}
-
-/* Estilos de texto */
-h1, h2, h3 {
-    text-align: center;
-    margin-bottom: var(--espacamento-padrao);
-    color: var(--cor-texto);
-}
-
-h1 {
-    font-size: 1.8rem;
-}
-
-h2 {
-    font-size: 1.4rem;
-}
-
-h3 {
-    font-size: 1.1rem;
-    line-height: 1.5; /* Melhora leitura */
-}
-
-p {
-    margin-bottom: var(--espacamento-padrao);
-    line-height: 1.6;
-    font-size: 1rem;
-}
-
-strong {
-    font-weight: bold;
-}
-
-/* Formulários e Inputs */
-.form-group {
+/* Barra de Título da "Janela" */
+.title-bar {
     display: flex;
-    flex-direction: column;
-    gap: var(--espacamento-padrao);
-    align-items: stretch; /* Alinha itens para ocupar largura */
-    margin-bottom: var(--espacamento-padrao);
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px;
+    background: linear-gradient(
+        90deg,
+        var(--win98-titlebar),
+        #1084d0
+    );
+    border: 2px solid var(--win98-dark);
+    font-weight: bold;
+    color: var(--win98-titlebar-text);
+    cursor: default;
+    margin-bottom: 1rem;
+    position: relative; /* Para o cursor piscando */
 }
 
-label {
-    display: block;
-    margin-bottom: var(--espacamento-metade);
-    font-size: 1rem;
-    color: var(--cor-texto);
-    text-align: left; /* Alinha labels à esquerda */
+.title-bar-text {
+    padding-left: 4px;
+    white-space: nowrap;
+    overflow: hidden; /* Evita que o texto ultrapasse a barra */
+    text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+    animation: cursorBlink 1s infinite steps(1); /* Adiciona animação de cursor */
 }
 
+.title-bar-controls {
+    display: flex;
+}
+
+.title-bar-controls button {
+    background: var(--win98-bg);
+    border: 2px solid;
+    border-top-color: var(--win98-light);
+    border-left-color: var(--win98-light);
+    border-right-color: var(--win98-dark);
+    border-bottom-color: var(--win98-dark);
+    width: 18px; /* Tamanho ligeiramente maior para botões de controle */
+    height: 16px;
+    padding: 0;
+    line-height: 1;
+    margin-left: 2px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    font-size: 12px; /* Fonte menor para os botões */
+}
+
+.title-bar-controls button:active {
+    border-top-color: var(--win98-dark);
+    border-left-color: var(--win98-dark);
+    border-right-color: var(--win98-light);
+    border-bottom-color: var(--win98-light);
+}
+
+.title-bar-controls button:hover {
+    filter: brightness(1.1);
+}
+
+/* Animação do cursor piscando */
+@keyframes cursorBlink {
+    50% { border-right: 1px solid var(--win98-titlebar-text); }
+    51% { border-right: 1px solid transparent; }
+    100% { border-right: 1px solid var(--win98-titlebar-text); }
+}
+
+
+/* Conteúdo da "Janela" */
+.window-content {
+    padding: 10px;
+    background-color: var(--win98-bg);
+    text-align: center;
+}
+
+/* Estilos de Botões */
+button {
+    background: var(--win98-bg);
+    border: 2px solid;
+    border-top-color: var(--win98-light);
+    border-left-color: var(--win98-light);
+    border-right-color: var(--win98-dark);
+    border-bottom-color: var(--win98-dark);
+    padding: 5px 10px;
+    font-family: var(--win98-font);
+    font-size: var(--win98-font-size);
+    cursor: pointer;
+    margin: 5px;
+    color: var(--win98-text);
+    transition: all 0.1s ease; /* Transição suave para o hover/active */
+}
+
+button:hover {
+    filter: brightness(1.05); /* Brilho leve no hover */
+}
+
+button:active {
+    border-top-color: var(--win98-dark);
+    border-left-color: var(--win98-dark);
+    border-right-color: var(--win98-light);
+    border-bottom-color: var(--win98-light);
+    transform: translateY(1px); /* Efeito de clique */
+}
+
+/* Estilos de Inputs */
 input[type="datetime-local"],
 input[type="date"],
 input[type="number"] {
-    display: block;
-    width: 100%; /* Ocupa toda a largura disponível */
-    padding: var(--espacamento-metade);
-    margin-top: var(--espacamento-metade) / 2;
-    border: 2px solid var(--cor-input-borda);
-    border-radius: var(--raio-borda-input);
-    background-color: var(--cor-input-fundo);
-    color: var(--cor-texto);
-    font-size: 1rem;
-    box-shadow: 0 0 5px var(--cor-input-sombra);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #ffffff;
+    border: 1px solid var(--win98-dark);
+    padding: 3px;
+    margin-top: 5px;
+    font-family: var(--win98-font);
+    font-size: var(--win98-font-size);
+    box-sizing: border-box;
 }
 
 input[type="datetime-local"]:focus,
 input[type="date"]:focus,
 input[type="number"]:focus {
     outline: none;
-    border-color: var(--cor-input-foco-borda);
-    box-shadow: 0 0 10px var(--cor-input-foco-sombra);
+    border: 1px dashed var(--win98-dark); /* Borda pontilhada no foco */
 }
 
-/* Botões */
-button {
-    display: block;
-    width: 100%;
-    padding: var(--espacamento-padrao);
-    margin-top: var(--espacamento-padrao);
-    border-radius: var(--raio-borda-input);
-    color: var(--cor-texto);
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    border-style: solid;
-    border-width: 3px;
+/* Layout do formulário */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
-.button-confirm {
-    background-color: rgba(0, 128, 0, 0.8); /* Verde */
-    border-color: rgb(0, 128, 0); /* Corrigido */
-    box-shadow: 0 0 10px var(--cor-neon-principal);
+label {
+    text-align: left;
 }
 
-.button-confirm:hover {
-    background-color: rgba(0, 128, 0, 1);
-    border-color: var(--cor-neon-hover);
-    box-shadow: 0 0 15px var(--cor-neon-hover), 0 0 30px var(--cor-neon-hover);
+/* Mensagens de erro/confirmação */
+.error-box, .confirmation-box {
+    border: 2px solid var(--win98-dark);
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: var(--win98-bg); /* Fundo padrão */
 }
 
-.button-cancel {
-    background-color: var(--cor-cancel-fundo);
-    border-color: var(--cor-cancel-borda);
-    box-shadow: 0 0 5px var(--cor-cancel-sombra);
-}
-
-.button-cancel:hover {
-    background-color: var(--cor-cancel-hover-fundo);
-    border-color: var(--cor-cancel-hover-sombra);
-    box-shadow: 0 0 15px var(--cor-cancel-hover-sombra);
-}
-
-/* Caixas Específicas */
 .error-box {
-    padding: var(--espacamento-padrao);
-    background: var(--cor-erro-fundo);
-    border: 2px solid var(--cor-erro-borda);
-    border-radius: var(--raio-borda);
-    color: var(--cor-texto);
-    box-shadow: 0 0 10px var(--cor-erro-sombra);
+    background-color: #ff0000; /* Vermelho para erro */
+    color: #ffffff;
+    border-color: #000000; /* Borda mais escura para destacar */
+    border-top-color: var(--win98-light);
+    border-left-color: var(--win98-light);
+    border-right-color: var(--win98-dark);
+    border-bottom-color: var(--win98-dark);
+    box-shadow: 1px 1px 0px 1px var(--win98-border-darkest);
 }
 
 .error-box h2 {
-    color: var(--cor-erro-borda); /* Destaca o título do erro */
+    margin-top: 0;
+    color: #ffffff;
 }
 
 .confirmation-box {
-    text-align: left;
-    padding: var(--espacamento-padrao);
-    background: var(--cor-confirmacao-fundo);
-    border: 2px solid var(--cor-confirmacao-borda);
-    border-radius: var(--raio-borda);
-    color: var(--cor-texto);
-    box-shadow: 0 0 10px var(--cor-confirmacao-sombra);
-    margin-bottom: var(--espacamento-padrao);
+    border-color: #000080; /* Azul escuro para confirmação */
+    background-color: #ADD8E6; /* Azul claro de fundo para informações */
 }
 
-.confirmation-box p {
-    margin-bottom: var(--espacamento-metade);
-}
-
-/* Media Queries para Responsividade (Exemplo) */
-@media (max-width: 600px) {
-    html {
-        font-size: 14px; /* Reduz a fonte base em telas menores */
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+    #app {
+        width: 90%; /* Aumenta um pouco o espaço em telas médias */
+        max-width: 400px;
     }
 
-    #app {
-        padding: var(--espacamento-padrao);
+    .title-bar {
+        padding: 3px;
+    }
+
+    .title-bar-text {
+        font-size: 13px; /* Diminui um pouco a fonte do título */
+    }
+
+    .title-bar-controls button {
+        width: 17px;
+        height: 17px;
     }
 
     h1 {
-        font-size: 1.6rem;
+        font-size: 1.6rem; /* Reduz tamanho do H1 */
     }
 
     h2 {
@@ -235,3 +234,49 @@ button {
     }
 }
 
+@media (max-width: 480px) {
+    #app {
+        width: 95%;
+        max-width: 100%;
+        height: 95%; /* Preenche a tela quase totalmente */
+        margin: 5px auto;
+        padding: 5px;
+        border-radius: 0; /* Remove cantos arredondados para parecer tela cheia */
+        box-shadow: none; /* Remove sombra para parecer nativo da tela */
+    }
+
+    .title-bar {
+        padding: 5px;
+        margin-bottom: 0.5rem; /* Menos margem inferior */
+    }
+
+    .title-bar-text {
+        font-size: 11px;
+    }
+
+    .title-bar-controls button {
+        width: 15px;
+        height: 15px;
+        font-size: 10px;
+    }
+
+    .window-content {
+        padding: 8px;
+    }
+
+    h1 {
+        font-size: 1.3rem;
+    }
+
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    p {
+        font-size: 13px;
+    }
+
+    button, input[type="datetime-local"], input[type="date"], input[type="number"] {
+        font-size: 13px;
+    }
+}
