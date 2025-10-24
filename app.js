@@ -66,7 +66,7 @@ function renderStartScreen() {
     container.appendChild(createElement("h1", { textContent: "Calculadora de Bonificação G2L" }));
     container.appendChild(createElement("p", { textContent: "Ação Zero Picos" }));
     container.appendChild(createElement("p", { textContent: "Em caso de dúvidas, procure informação no Loop ou peça ajuda ao coleguinha do lado. Caso mesmo assim não se sinta seguro em continuar, peça ajuda à gestão." }));
-    container.appendChild(createElement("p", { textContent: "Informe as datas e horários do contrato:" }));
+    container.appendChild(createElement("p", { textContent: "Informe as  e horários do contrato:" }));
 
     const formContainer = createElement("div", { className: "form-group" });
 
@@ -159,7 +159,7 @@ function renderSpeedPeaksInputScreen() {
 function renderPeakDatesScreen(peakCount) {
     const container = createElement("div", { className: "container text-center" });
 
-    container.appendChild(createElement("h2", { textContent: "Informe as datas dos picos:" }));
+    container.appendChild(createElement("h2", { textContent: "Informe as  dos picos:" }));
 
     const inputContainer = createElement("div", { className: "form-group" });
     appState.speedPeaksData = Array(peakCount).fill(null);
@@ -172,11 +172,11 @@ function renderPeakDatesScreen(peakCount) {
     }
     container.appendChild(inputContainer);
 
-    const confirmButton = createElement("button", { textContent: "Confirmar Datas" });
+    const confirmButton = createElement("button", { textContent: "Confirmar " });
     confirmButton.addEventListener("click", () => handlePeakDatesInput(peakCount));
     container.appendChild(confirmButton);
 
-    createDialog("Datas dos Picos", container, renderSpeedPeaksInputScreen); // Voltar para a tela de quantidade de picos
+    createDialog(" dos Picos", container, renderSpeedPeaksInputScreen); // Voltar para a tela de quantidade de picos
 }
 
 function renderPeakDatesConfirmationScreen(peakDates) {
@@ -238,7 +238,7 @@ function handleDateInput() {
             renderDaysDialog();
         }
     } else {
-        renderError("Datas inválidas. Verifique se a data de início é anterior à data de fim e se ambas foram preenchidas.");
+        renderError("Você errou e foi moleque! As datas estão inválidas ou não foram preenchidas corretamente, seu/sua tanso(a)! Verifique também se a data de início é anterior à data de fim.");
     }
 }
 
