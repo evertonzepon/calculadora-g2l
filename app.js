@@ -6,7 +6,9 @@ const appState = {
     hasSpeedPeaks: null,
     speedPeaksData: [],
     bonus: 0,
-    peakCountInput: 0
+    peakCountInput: 0} else {
+        renderError("Você errou e foi moleque! As datas estão inválidas ou não foram preenchidas corretamente, seu/sua tanso(a)! Verifique também se a data de início é anterior à data de fim.");
+    }
 };
 
 // Elemento principal da aplicação
@@ -238,13 +240,8 @@ function handleDateInput() {
             renderDaysDialog();
         }
     } else {
-        renderError(´Você errou e foi moleque! As datas estão inválidas ou não foram preenchidas corretamente, seu/sua tanso(a)! Verifique também se a data de início é anterior à data de fim.
-                    <div style="text-align: center; margin-top: 20px;">
-            <img src="/gato.png" 
-             alt="Erro épico" 
-             style="max-width: 300px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);"></div>
-                 ´);
-    }
+        renderError("Você errou e foi moleque! As datas estão inválidas ou não foram preenchidas corretamente, seu/sua tanso(a)! Verifique também se a data de início é anterior à data de fim.");
+    }
 }
 
 function handleSpeedPeaks(answer) {
