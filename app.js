@@ -6,9 +6,7 @@ const appState = {
     hasSpeedPeaks: null,
     speedPeaksData: [],
     bonus: 0,
-    peakCountInput: 0} else {
-        renderError("Você errou e foi moleque! As datas estão inválidas ou não foram preenchidas corretamente, seu/sua tanso(a)! Verifique também se a data de início é anterior à data de fim.");
-    }
+    peakCountInput: 0
 };
 
 // Elemento principal da aplicação
@@ -240,8 +238,8 @@ function handleDateInput() {
             renderDaysDialog();
         }
     } else {
-        renderError("Você errou e foi moleque! As datas estão inválidas ou não foram preenchidas corretamente, seu/sua tanso(a)! Verifique também se a data de início é anterior à data de fim.");
-    }
+        renderError("Você errou e foi moleque! As datas estão inválidas ou não foram preenchidas corretamente, seu/sua tanso(a)! Verifique também se a data de início é anterior à data de fim.");
+    }
 }
 
 function handleSpeedPeaks(answer) {
