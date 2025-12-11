@@ -367,6 +367,222 @@ function formatDateTime(dateTimeString) {
     return `${formattedDate} ${formattedTime}`;
 }
 
+// --- Funções de Tema ---
+
+function applyThemeClass(theme) {
+    // Remove theme classes
+    document.body.classList.remove('theme-matrix');
+    if (theme === 'matrix') {
+        document.body.classList.add('theme-matrix');
+    }
+    // Atualiza estilo do botão ativo
+    document.querySelectorAll('.theme-button').forEach(btn => btn.classList.remove('theme-active-button'));
+    const map = {
+        'default': 'btn-current',
+        'matrix': 'btn-xp'
+    };
+    const id = map[theme] || 'btn-current';
+    const activeBtn = document.getElementById(id);
+    if (activeBtn) activeBtn.classList.add('theme-active-button');
+    // Start/stop animations depending on theme
+    if (theme === 'matrix' && matrixAnimationEnabled) startMatrix(); else stopMatrix();
+}
+
+function setTheme(theme) {
+    if (!theme || theme === 'default') {
+        localStorage.removeItem('siteTheme');
+        applyThemeClass('default');
+        return;
+    }
+    localStorage.setItem('siteTheme', theme);
+    applyThemeClass(theme);
+}
+
+function initThemeControls() {
+    const btnCurrent = document.getElementById('btn-current');
+    const btnXp = document.getElementById('btn-xp');
+    const btnMatrixToggle = document.getElementById('btn-matrix-toggle');
+
+    if (btnCurrent) btnCurrent.addEventListener('click', () => setTheme('default'));
+    if (btnXp) btnXp.addEventListener('click', () => setTheme('matrix'));
+
+    if (btnMatrixToggle) {
+        btnMatrixToggle.addEventListener('click', () => {
+            toggleMatrixAnimation();
+        });
+    }
+}
+
+// Matrix animation toggle state (persisted)
+let matrixAnimationEnabled = true;
+function updateMatrixToggleButton() {
+    const btn = document.getElementById('btn-matrix-toggle');
+    if (!btn) return;
+    // Use play/pause icons. When enabled -> show pause icon; when disabled -> show play icon
+    if (matrixAnimationEnabled) {
+        btn.innerHTML = '⏸';
+        btn.setAttribute('title', 'Pausar animação Matrix');
+        btn.classList.remove('theme-active-button');
+        btn.setAttribute('aria-pressed', 'true');
+    } else {
+        btn.innerHTML = '▶';
+        btn.setAttribute('title', 'Reproduzir animação Matrix');
+        btn.classList.add('theme-active-button');
+        btn.setAttribute('aria-pressed', 'false');
+    }
+}
+
+function toggleMatrixAnimation() {
+    matrixAnimationEnabled = !matrixAnimationEnabled;
+    try { localStorage.setItem('matrixEnabled', matrixAnimationEnabled ? '1' : '0'); } catch (e) {}
+    updateMatrixToggleButton();
+    // If currently on matrix theme, start/stop immediately
+    const isMatrixActive = document.body.classList.contains('theme-matrix');
+    if (isMatrixActive) {
+        if (matrixAnimationEnabled) startMatrix(); else stopMatrix();
+    }
+}
+
+function initTheme() {
+    const saved = localStorage.getItem('siteTheme');
+    initThemeControls();
+    // load matrix enabled state
+    try {
+        const m = localStorage.getItem('matrixEnabled');
+        if (m === '0') matrixAnimationEnabled = false; else matrixAnimationEnabled = true;
+    } catch (e) { matrixAnimationEnabled = true; }
+    updateMatrixToggleButton();
+    if (saved) {
+        applyThemeClass(saved);
+    } else {
+        applyThemeClass('default');
+    }
+}
+
 // --- Inicialização ---
 
-document.addEventListener("DOMContentLoaded", renderStartScreen);
+document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+    renderStartScreen();
+});
+
+// --- Matrix rain effect (canvas) ---
+let _matrix = null;
+function createMatrixRain() {
+    const canvas = document.getElementById('matrix-canvas');
+    if (!canvas) return null;
+    const ctx = canvas.getContext('2d');
+
+    let dpr = Math.max(1, window.devicePixelRatio || 1);
+    let width = 0;
+    let height = 0;
+    const letters = 'abcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()*&^%';
+    let fontSize = 16;
+    let columns = 0;
+    let drops = [];
+
+    function setupSizes() {
+        dpr = Math.max(1, window.devicePixelRatio || 1);
+        width = Math.floor(window.innerWidth);
+        height = Math.floor(window.innerHeight);
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // adapt font size slightly to width
+        fontSize = Math.max(12, Math.floor(Math.min(20, width / 80)));
+        columns = Math.floor(width / fontSize) + 1;
+        drops = new Array(columns).fill(1);
+    }
+
+    setupSizes();
+    window.addEventListener('resize', () => { setupSizes(); });
+
+    let rafId = null;
+    let running = false;
+
+    function draw() {
+        // translucent black to create trail effect
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = letters.charAt(Math.floor(Math.random() * letters.length));
+            const x = i * fontSize;
+            const y = drops[i] * fontSize;
+
+            // head bright
+            ctx.fillStyle = 'rgba(200,255,200,0.95)';
+            ctx.fillText(text, x, y);
+
+            // slightly dimmer char slightly above to create small tail
+            ctx.fillStyle = 'rgba(0,255,102,0.6)';
+            ctx.fillText(text, x, y - Math.floor(fontSize / 2));
+
+            if (y > height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+
+        rafId = requestAnimationFrame(draw);
+    }
+
+    // Draw a single frame (static) without scheduling next frame
+    function drawFrame() {
+        // fill with translucent black to create the trail look once
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+        ctx.fillRect(0, 0, width, height);
+        ctx.font = fontSize + 'px monospace';
+        for (let i = 0; i < drops.length; i++) {
+            const text = letters.charAt(Math.floor(Math.random() * letters.length));
+            const x = i * fontSize;
+            const y = drops[i] * fontSize;
+            ctx.fillStyle = 'rgba(200,255,200,0.95)';
+            ctx.fillText(text, x, y);
+            ctx.fillStyle = 'rgba(0,255,102,0.6)';
+            ctx.fillText(text, x, y - Math.floor(fontSize / 2));
+            // advance drops slightly so repeated static frames vary a bit
+            if (y > height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    return {
+        start() {
+            if (!running) {
+                running = true;
+                ctx.clearRect(0, 0, width, height);
+                draw();
+            }
+        },
+        stop() {
+            if (running) {
+                running = false;
+                if (rafId) cancelAnimationFrame(rafId);
+                // draw a final static frame and keep it visible (pause effect)
+                drawFrame();
+            } else {
+                // if not running, still render a frame so toggling off shows static
+                drawFrame();
+            }
+        }
+    };
+}
+
+function startMatrix() {
+    if (!_matrix) _matrix = createMatrixRain();
+    if (_matrix) _matrix.start();
+}
+
+function stopMatrix() {
+    if (_matrix) _matrix.stop();
+}
+
+// Ensure matrix stops when navigating away
+window.addEventListener('pagehide', () => { if (_matrix) _matrix.stop(); });
