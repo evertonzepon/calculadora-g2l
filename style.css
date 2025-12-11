@@ -280,3 +280,135 @@ label {
         font-size: 13px;
     }
 }
+
+/* Theme controls (botões de tema) */
+#theme-controls {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 9999;
+    display: flex;
+    gap: 6px;
+    background: transparent;
+}
+
+/* Hide the matrix toggle button unless matrix theme is active */
+#btn-matrix-toggle {
+    display: none;
+}
+
+.theme-matrix #btn-matrix-toggle {
+    display: inline-block;
+}
+
+.theme-button {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.theme-button:hover { filter: brightness(0.98); }
+
+
+/* Theme: Matrix (terminal / code rain) */
+.theme-matrix {
+    --matrix-bg: #020202;
+    --matrix-text: #00ff66;
+    --matrix-surface: rgba(0,0,0,0.65);
+    font-family: 'Courier New', Courier, monospace;
+}
+.theme-matrix body {
+    background-color: var(--matrix-bg) !important;
+    background-image: linear-gradient(transparent 0, rgba(0,0,0,0.06) 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 0, transparent 1px);
+    color: var(--matrix-text) !important;
+}
+.theme-matrix #app {
+    background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(12,12,12,0.75));
+    border-radius: 6px;
+    border: 1px solid rgba(0,255,102,0.06);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+}
+.theme-matrix .window-content {
+    background: #000000; /* fundo preto sólido para o conteúdo da janela */
+    color: var(--matrix-text);
+    border-radius: 4px;
+    padding: 10px;
+}
+
+/* Matrix: make form controls dark to match the terminal look */
+.theme-matrix input,
+.theme-matrix input[type="datetime-local"],
+.theme-matrix input[type="date"],
+.theme-matrix input[type="number"],
+.theme-matrix select,
+.theme-matrix textarea {
+    background: #000000 !important;
+    color: var(--matrix-text) !important;
+    border: 1px solid rgba(0,255,102,0.16) !important;
+    box-shadow: none !important;
+    padding: 6px 8px;
+}
+
+.theme-matrix input::placeholder,
+.theme-matrix textarea::placeholder {
+    color: rgba(0,255,102,0.36) !important;
+}
+
+.theme-matrix input:focus,
+.theme-matrix select:focus,
+.theme-matrix textarea:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0,255,102,0.06) !important;
+    border-color: rgba(0,255,102,0.28) !important;
+}
+.theme-matrix .title-bar {
+    background: linear-gradient(90deg,#01110a,#022012);
+    color: var(--matrix-text);
+}
+.theme-matrix button, .theme-matrix .theme-button {
+    background: rgba(0,0,0,0.55);
+    color: var(--matrix-text);
+    border: 1px solid rgba(0,255,102,0.12);
+    font-family: inherit;
+}
+.theme-matrix .window-content, .theme-matrix .confirmation-box, .theme-matrix .error-box { color: var(--matrix-text); }
+
+/* add subtle falling code-rain effect in the background using repeated gradient */
+.theme-matrix::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(0,255,102,0.02) 1px, transparent 1px);
+    opacity: 0.6;
+    mix-blend-mode: screen;
+}
+
+/* Canvas do Matrix */
+/* Matrix canvas sits behind the app */
+#matrix-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    display: none; /* activated by theme */
+    z-index: 0; /* behind app */
+    will-change: transform;
+}
+
+.theme-matrix #matrix-canvas {
+    display: block;
+}
+/* Make sure the main app sits above the matrix canvas */
+#app { position: relative; z-index: 1; }
+
+/* When a theme is active, slightly highlight its control button */
+/* Keep this generic rule for any theme that may want to mark an active button */
+.theme-active-button {
+    outline: 2px solid rgba(0,123,255,0.25);
+}
