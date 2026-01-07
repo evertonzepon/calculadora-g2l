@@ -231,7 +231,7 @@ function handleDateInput() {
         const differenceMs = endDate - startDate;
         const totalDaysRaw = differenceMs / (1000 * 60 * 60 * 24);
 
-        if (totalDaysRaw <= 7) {
+        if (totalDaysRaw < 7) {
             renderError("O período do contrato deve ser superior a 7 dias.");
         } else {
             calculateContractDays(startDateInput, endDateInput);
